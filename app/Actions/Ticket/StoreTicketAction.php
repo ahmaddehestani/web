@@ -1,0 +1,35 @@
+<?php
+
+namespace App\Actions\Ticket;
+
+use App\Actions\Message\StoreMessageAction;
+use App\Models\Ticket;
+use App\Repositories\Ticket\TicketRepositoryInterface;
+use Illuminate\Support\Facades\DB;
+use Lorisleiva\Actions\Concerns\AsAction;
+
+class StoreTicketAction
+{
+    use AsAction;
+
+    public function __construct(
+        private readonly TicketRepositoryInterface $repository,
+        private readonly StoreMessageAction $storeMessageAction
+    )
+    {
+    }
+
+    public function handle(array $payload): Ticket
+    {
+        return DB::transaction(function () use ($payload) {
+        $payload['user_id'] = auth()->id();
+        $model = $this->repository->create($payload);
+        $this->storeMessageAction->handle([
+            'key' => $model->key,
+            'message'   => $payload['description'],
+        ]);
+        //todo make event
+        return $model->load('messages','user');
+        });
+    }
+}
