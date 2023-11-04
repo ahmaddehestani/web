@@ -12,8 +12,8 @@ enum TableTicketFieldDepartmentEnum:string
     public function title(): array|string|\Illuminate\Contracts\Translation\Translator|\Illuminate\Contracts\Foundation\Application|null
     {
         return match ($this) {
-            self::SUPPORT => __("support"),
-            self::CRM => __("crm"),
+            self::SUPPORT => __("general.support"),
+            self::CRM => __("general.crm"),
 
         };
     }

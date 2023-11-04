@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Api\V1\Auth;
 
 
 use App\Actions\User\Otp\SentOtpAction;
+use App\Actions\User\StoreUserAction;
+use App\Actions\User\UpdateUserAction;
 use App\Http\Controllers\Api\V1\BaseApiController;
 use App\Http\Requests\ConfirmOtpRequest;
 use App\Http\Requests\ForgetPasswordRequest;
@@ -13,12 +15,15 @@ use App\Http\Requests\SetPasswordRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Models\UserOtp;
+use App\Repositories\User\UserRepositoryInterface;
 use Auth;
 use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 
 class AuthController extends BaseApiController
 {
+
     /**
      * @throws \Exception
      */
@@ -32,6 +37,7 @@ class AuthController extends BaseApiController
             }
             if (!$oldUser) {
                 return DB::transaction(function () use ($request) {
+//                    $result=StoreUserAction::run($request->validated());
                     $user = new User;
                     $user->mobile_prefix = $request->mobile_prefix;
                     $user->mobile = (int)$request->mobile;
@@ -71,37 +77,36 @@ class AuthController extends BaseApiController
         }
     }
 
-    public function setPassword(SetPasswordRequest $request)
+    public function setPassword(SetPasswordRequest $request): JsonResponse
     {
         $user = auth()->user();
-        $user->update($request->validated());
+        $user = UpdateUserAction::run($user, $request->validated());
         return $this->successResponse(UserResource::make($user),
             trans('user.update_success')
         );
     }
 
-    public function login(LoginRequest $request)
+    public function login(LoginRequest $request): JsonResponse
     {
         if (Auth::attempt(['mobile' => $request->mobile, 'password' => $request->password])) {
             $user = Auth::user();
-            $data['token'] = $user->createToken('MyApp')->plainTextToken;
+            $data['token'] = $user?->createToken('MyApp')->plainTextToken;
             return $this->successResponse($data, trans('auth.login_successfully'));
         }
         return $this->errorResponse(trans('auth.password_incorrect'));
     }
 
-    public function forgetPassword(ForgetPasswordRequest $request)
+    public function forgetPassword(ForgetPasswordRequest $request): JsonResponse
     {
         if ($request->input('mobile_prefix', '+98') === '+98') {
             $user = User::where('mobile', $request->input('mobile'))->first();
-           if($user){
-               if (isset($user['mobile_verified_at'])) {
-                   $data = SentOtpAction::run($user);
-
-                   return $this->successResponse($data);
-               }
-               return $this->errorResponse(trans('auth.not_confirmed'));
-           }
+            if ($user) {
+                if (isset($user['mobile_verified_at'])) {
+                    $data = SentOtpAction::run($user);
+                    return $this->successResponse($data);
+                }
+                return $this->errorResponse(trans('auth.not_confirmed'));
+            }
         }
         return $this->errorResponse(trans('auth.must_registered'));
     }

@@ -12,8 +12,8 @@ enum TableTicketFieldStatusEnum: string
     public function title(): array|string|\Illuminate\Contracts\Translation\Translator|\Illuminate\Contracts\Foundation\Application|null
     {
         return match ($this) {
-            self::OPEN => __("open"),
-            self::CLOSE => __("close"),
+            self::OPEN => __("general.open"),
+            self::CLOSE => __("general.close"),
 
         };
     }

@@ -12,8 +12,8 @@ enum TableTicketFieldPriorityEnum:string
     public function title(): array|string|\Illuminate\Contracts\Translation\Translator|\Illuminate\Contracts\Foundation\Application|null
     {
         return match ($this) {
-            self::NORMAL => __("normal"),
-            self::IMPORTANT => __("important"),
+            self::NORMAL => __("general.normal"),
+            self::IMPORTANT => __("general.important"),
 
         };
     }
