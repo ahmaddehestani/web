@@ -33,6 +33,13 @@ class SMSHelper
                     'token3' => $inputs[2],
                 ];
                 break;
+            case SmsGatewayPatternEnum::ADMIN:
+                $this->parameters = [
+                    'token'  => $inputs[0],
+                    'token2' => $inputs[1],
+
+                ];
+                break;
         }
 
     }

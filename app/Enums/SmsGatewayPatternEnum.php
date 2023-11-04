@@ -7,4 +7,6 @@ enum SmsGatewayPatternEnum: string
     case OTP = "otpMetanext";
     case TICKET="creatorNewTicketMetanext";
     case MASSAGE="responseTicketMetanext";
+    case ADMIN="adminNewTicketMetanext";
+
 }
