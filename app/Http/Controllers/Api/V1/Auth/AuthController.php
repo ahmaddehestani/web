@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Api\V1\Auth;
 
 
+use App\Actions\User\Otp\SentOtpAction;
 use App\Http\Controllers\Api\V1\BaseApiController;
 use App\Http\Requests\ConfirmOtpRequest;
+use App\Http\Requests\ForgetPasswordRequest;
 use App\Http\Requests\loginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\SetPasswordRequest;
@@ -13,7 +15,6 @@ use App\Models\User;
 use App\Models\UserOtp;
 use Auth;
 use Carbon\Carbon;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class AuthController extends BaseApiController
@@ -24,10 +25,10 @@ class AuthController extends BaseApiController
     public function register(RegisterRequest $request)
     {
 
-        if ($request->input('mobile_prefix','+98') === '+98') {
+        if ($request->input('mobile_prefix', '+98') === '+98') {
             $oldUser = User::where('mobile', $request->input('mobile'))->first();
-            if(isset($oldUser['mobile_verified_at'])){
-                return 'you register before please use remember password link';
+            if (isset($oldUser['mobile_verified_at'])) {
+                return trans('auth.registered');
             }
             if (!$oldUser) {
                 return DB::transaction(function () use ($request) {
@@ -35,17 +36,17 @@ class AuthController extends BaseApiController
                     $user->mobile_prefix = $request->mobile_prefix;
                     $user->mobile = (int)$request->mobile;
                     $user->save();
-                    $data = $user->makeOtp();
+                    $data = SentOtpAction::run($user);
                     return $this->successResponse($data);
                 });
             }
-            $data = $oldUser->makeOtp();
+            $data = SentOtpAction::run($oldUser);
             return $this->successResponse($data);
 
 
         }
 
-        return $this->errorResponse('your mobile prefix is incorrect ');
+        return $this->errorResponse(trans('auth.prefix_incorrect'));
     }
 
     public function confirmOtp(ConfirmOtpRequest $request)
@@ -57,16 +58,16 @@ class AuthController extends BaseApiController
                     'mobile_verified_at' => Carbon::now(),
                 ]);
                 $success['token'] = $userOtp->user->createToken('MyApp')->plainTextToken;
-                return $this->successResponse($success, 'mobile verification successfully');
+                return $this->successResponse($success, trans('auth.verified'));
             }
             $try_count = $userOtp['try_count'];
             $userOtp->update(
                 [
                     'try_count' => $try_count + 1,
                 ]);
-            return $this->errorResponse('otp is incorrect', 403);
+            return $this->errorResponse(trans('auth.prefix_incorrect'), 403);
         } else {
-            return $this->errorResponse('this mobile verification before ', 403);
+            return $this->errorResponse(trans('auth.mobile_verification_before'), 403);
         }
     }
 
@@ -83,9 +84,25 @@ class AuthController extends BaseApiController
     {
         if (Auth::attempt(['mobile' => $request->mobile, 'password' => $request->password])) {
             $user = Auth::user();
-           $data['token']= $user->createToken('MyApp')->plainTextToken;
-           return $this->successResponse($data,'user login successfully');
+            $data['token'] = $user->createToken('MyApp')->plainTextToken;
+            return $this->successResponse($data, trans('auth.login_successfully'));
         }
-        return $this->errorResponse('mobile or password is incorrect');
+        return $this->errorResponse(trans('auth.password_incorrect'));
+    }
+
+    public function forgetPassword(ForgetPasswordRequest $request)
+    {
+        if ($request->input('mobile_prefix', '+98') === '+98') {
+            $user = User::where('mobile', $request->input('mobile'))->first();
+           if($user){
+               if (isset($user['mobile_verified_at'])) {
+                   $data = SentOtpAction::run($user);
+
+                   return $this->successResponse($data);
+               }
+               return $this->errorResponse(trans('auth.not_confirmed'));
+           }
+        }
+        return $this->errorResponse(trans('auth.must_registered'));
     }
 }

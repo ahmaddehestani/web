@@ -31,6 +31,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::post('/register',[AuthController::class,'register']);
 Route::post('/confirmOpt',[AuthController::class,'confirmOtp']);
 Route::post('/login',[AuthController::class,'login']);
+Route::post('/forgetPassword',[AuthController::class,'forgetPassword']);
 Route::post('/setPassword',[AuthController::class,'setPassword'])->middleware('auth:api');
 Route::apiresource('ticket', TicketController::class)->parameter('ticket','ticket:key');
 Route::get('ticket/{ticket:key}/toggle', [TicketController::class,'toggleStatus']);

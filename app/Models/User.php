@@ -53,24 +53,4 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password'          => 'hashed',
     ];
-
-    public function makeOtp(): array
-    {
-
-//        $otp = rand(10000, 99999);
-        $otp = 11111;
-        $secret = Str::random(30);
-        $user_otp = new UserOtp;
-        $user_otp->user_id = $this->id;
-        $user_otp->secret = $secret;
-        $user_otp->otp = $otp;
-        $user_otp->ip_address = request()->ip();
-        $user_otp->save();
-
-        return [
-            'secret' => $secret,
-        ];
-    }
-
-
 }
