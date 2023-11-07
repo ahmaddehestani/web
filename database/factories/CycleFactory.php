@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Models\Plan;
+use App\Models\Product;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,7 +19,10 @@ class CycleFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'product_id'=>Product::factory()->create(),
+            'plan_id'=>Plan::factory()->create(),
+            'name'=>fake()->name(),
+            'price'=>random_int(12345,99999999),
         ];
     }
 }

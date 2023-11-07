@@ -37,7 +37,6 @@ class AuthController extends BaseApiController
             }
             if (!$oldUser) {
                 return DB::transaction(function () use ($request) {
-//                    $result=StoreUserAction::run($request->validated());
                     $user = new User;
                     $user->mobile_prefix = $request->mobile_prefix;
                     $user->mobile = (int)$request->mobile;
@@ -58,23 +57,27 @@ class AuthController extends BaseApiController
     public function confirmOtp(ConfirmOtpRequest $request)
     {
         $userOtp = UserOtp::where('secret', $request['secret'])->latest()->first();
-        if (is_null($userOtp->user->mobile_verified_at)) {
-            if ($userOtp && ($userOtp->otp == $request['otp']) && $userOtp->try_count < 5) {
-                $userOtp->user()->update([
-                    'mobile_verified_at' => Carbon::now(),
-                ]);
-                $success['token'] = $userOtp->user->createToken('MyApp')->plainTextToken;
-                return $this->successResponse($success, trans('auth.verified'));
+        if ($userOtp) {
+            if (is_null($userOtp->user->mobile_verified_at)) {
+                if ($userOtp && ($userOtp->otp == $request['otp']) && $userOtp->try_count < 5) {
+                    $userOtp->user()->update([
+                        'mobile_verified_at' => Carbon::now(),
+                    ]);
+                    $success['token'] = $userOtp->user->createToken('MyApp')->plainTextToken;
+                    return $this->successResponse($success, trans('auth.verified'));
+                }
+                $try_count = $userOtp['try_count'];
+                $userOtp->update(
+                    [
+                        'try_count' => $try_count + 1,
+                    ]);
+                return $this->errorResponse(trans('auth.otp_incorrect'), 403);
+            } else {
+                return $this->errorResponse(trans('auth.mobile_verification_before'), 403);
             }
-            $try_count = $userOtp['try_count'];
-            $userOtp->update(
-                [
-                    'try_count' => $try_count + 1,
-                ]);
-            return $this->errorResponse(trans('auth.prefix_incorrect'), 403);
-        } else {
-            return $this->errorResponse(trans('auth.mobile_verification_before'), 403);
-        }
+
+        }    return  $this->errorResponse(trans('ye chizi eshtebh'), 403);
+
     }
 
     public function setPassword(SetPasswordRequest $request): JsonResponse
