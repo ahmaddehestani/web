@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Api\V1\Auth;
 
 
 use App\Actions\User\Otp\SentOtpAction;
-use App\Actions\User\StoreUserAction;
 use App\Actions\User\UpdateUserAction;
 use App\Http\Controllers\Api\V1\BaseApiController;
 use App\Http\Requests\ConfirmOtpRequest;
@@ -15,7 +14,6 @@ use App\Http\Requests\SetPasswordRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Models\UserOtp;
-use App\Repositories\User\UserRepositoryInterface;
 use Auth;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
@@ -57,27 +55,14 @@ class AuthController extends BaseApiController
     public function confirmOtp(ConfirmOtpRequest $request)
     {
         $userOtp = UserOtp::where('secret', $request['secret'])->latest()->first();
-        if ($userOtp) {
-            if (is_null($userOtp->user->mobile_verified_at)||!is_null($userOtp->user->password)) {
-                if ($userOtp && ($userOtp->otp == $request['otp']) && $userOtp->try_count < 5) {
-                    $userOtp->user()->update([
-                        'mobile_verified_at' => Carbon::now(),
-                    ]);
-                    $success['token'] = $userOtp->user->createToken('MyApp')->plainTextToken;
-                    return $this->successResponse($success, trans('auth.verified'));
-                }
-                $try_count = $userOtp['try_count'];
-                $userOtp->update(
-                    [
-                        'try_count' => $try_count + 1,
-                    ]);
-                return $this->errorResponse(trans('auth.otp_incorrect'), 403);
-            } else {
-                return $this->errorResponse(trans('auth.mobile_verification_before'), 403);
-            }
-
-        }    return  $this->errorResponse(trans('ye chizi eshtebh'), 403);
-
+        if ($userOtp && $userOtp->otp === $request['otp']) {
+            $userOtp->user()->update([
+                'mobile_verified_at' => Carbon::now(),
+            ]);
+            $success['token'] = $userOtp->user->createToken('MyApp')->plainTextToken;
+            return $this->successResponse($success, trans('auth.verified'));
+        }
+        return $this->errorResponse(trans('auth.otp_incorrect'), 403);
     }
 
     public function setPassword(SetPasswordRequest $request): JsonResponse
