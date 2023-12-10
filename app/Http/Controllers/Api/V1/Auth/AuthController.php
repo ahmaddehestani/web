@@ -58,7 +58,7 @@ class AuthController extends BaseApiController
     {
         $userOtp = UserOtp::where('secret', $request['secret'])->latest()->first();
         if ($userOtp) {
-            if (is_null($userOtp->user->mobile_verified_at)) {
+            if (is_null($userOtp->user->mobile_verified_at)||!is_null($userOtp->user->password)) {
                 if ($userOtp && ($userOtp->otp == $request['otp']) && $userOtp->try_count < 5) {
                     $userOtp->user()->update([
                         'mobile_verified_at' => Carbon::now(),

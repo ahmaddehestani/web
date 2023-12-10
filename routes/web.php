@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Web\CampaignController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,6 +14,5 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/',[CampaignController::class, 'create'])->name('campaign.create');
+Route::post('/campaign',[CampaignController::class, 'store'])->name('campaign.store');
