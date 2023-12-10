@@ -13,6 +13,7 @@
     <form class="my-form" action="{{route('campaign.store')}}" method="post" >
         @csrf
         <div>
+            
             @if (session('message'))
                 <div style="color: green">
                     {{ session('message') }}
