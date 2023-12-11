@@ -33,6 +33,7 @@ Route::post('/confirmOpt',[AuthController::class,'confirmOtp']);
 Route::post('/login',[AuthController::class,'login']);
 Route::post('/forgetPassword',[AuthController::class,'forgetPassword']);
 Route::post('/setPassword',[AuthController::class,'setPassword'])->middleware('auth:api');
+Route::get('/me',[AuthController::class,'HowIsLogin'])->middleware('auth:api');
 Route::apiresource('ticket', TicketController::class)->parameter('ticket','ticket:key');
 Route::get('ticket/{ticket:key}/toggle', [TicketController::class,'toggleStatus']);
 Route::apiresource('message', MessageController::class)->parameter('message','message:uuid');

@@ -11,11 +11,13 @@ use App\Http\Requests\ForgetPasswordRequest;
 use App\Http\Requests\loginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\SetPasswordRequest;
+use App\Http\Resources\HowIsLoginResource;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Models\UserOtp;
 use Auth;
 use Carbon\Carbon;
+use http\Client\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 
@@ -97,5 +99,9 @@ class AuthController extends BaseApiController
             }
         }
         return $this->errorResponse(trans('auth.must_registered'));
+    }
+
+    public function HowIsLogin(){
+        return $this->successResponse(HowIsLoginResource::make(auth()->user()));
     }
 }
