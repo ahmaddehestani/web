@@ -81,6 +81,7 @@ class AuthController extends BaseApiController
         if (Auth::attempt(['mobile' => $request->mobile, 'password' => $request->password])) {
             $user = Auth::user();
             $data['token'] = $user?->createToken('MyApp')->plainTextToken;
+            $data['user']=HowIsLoginResource::make(auth()->user());
             return $this->successResponse($data, trans('auth.login_successfully'));
         }
         return $this->errorResponse(trans('auth.password_incorrect'));

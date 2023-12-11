@@ -31,6 +31,7 @@ class StoreTicketAction
                 'key'     => $model->key,
                 'message' => $payload['description'],
             ]);
+
             //todo make event
             $user = auth()->user();
             $user?->notify(new NewTicketNotification($model->key,$user?->name));

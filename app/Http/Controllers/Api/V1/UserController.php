@@ -26,7 +26,8 @@ class UserController extends BaseApiController
     public function index(Request $request, UserRepositoryInterface $repository)
     {
         $data = $repository->paginate($request->input('page_limit'));
-        return $this->successResponse(UserResource::collection($data));
+        return $this->resultWithAdditional(UserResource::collection($data));
+//        return $this->successResponse(UserResource::collection($data));
     }
 
     /**
@@ -46,7 +47,7 @@ class UserController extends BaseApiController
      */
     public function show(User $user)
     {
-        return $this->successResponse(UserResource::make($user));
+        return $this->successResponse(UserResource::make($user->load(['services','tickets'])));
 
     }
 

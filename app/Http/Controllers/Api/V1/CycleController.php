@@ -26,7 +26,8 @@ class CycleController extends BaseApiController
     public function index(Request $request, CycleRepositoryInterface $repository)
     {
         $data = $repository->paginate($request->input('page_limit'));
-        return $this->successResponse(CycleResource::collection($data));
+        return $this->resultWithAdditional(CycleResource::collection($data));
+//        return $this->successResponse(CycleResource::collection($data));
     }
 
     /**

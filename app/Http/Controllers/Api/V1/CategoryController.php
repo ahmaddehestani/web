@@ -27,7 +27,8 @@ class CategoryController extends BaseApiController
     public function index(Request $request, CategoryRepositoryInterface $repository)
     {
         $data = $repository->paginate($request->input('page_limit'));
-        return $this->successResponse(CategoryResource::collection($data));
+       return $this->resultWithAdditional(CategoryResource::collection($data));
+//        return $this->successResponse(CategoryResource::collection($data));
     }
 
     /**

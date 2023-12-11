@@ -27,7 +27,8 @@ class ServiceController extends BaseApiController
     public function index(Request $request,ServiceRepositoryInterface $repository)
     {
         $data=$repository->paginate($request->input('page_limit'));
-        return $this->successResponse(ServiceResource::collection($data));
+        return $this->resultWithAdditional(ServiceResource::collection($data));
+//        return $this->successResponse(ServiceResource::collection($data));
 
     }
 

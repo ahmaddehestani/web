@@ -22,6 +22,12 @@ class UserResource extends JsonResource
             'mobile'=>$this->mobile,
             'email_verified_at'=>$this->email_verified_at,
             'mobile_verified_at'=>$this->mobile_verified_at,
+            'tickets'=>$this->whenLoaded('tickets',function (){
+                return   TicketResource::collection($this->resource->tickets);
+            }),
+            'services'=>$this->whenLoaded('services',function (){
+                return   ServiceResource::collection($this->resource->services);
+            }),
         ];
     }
 }

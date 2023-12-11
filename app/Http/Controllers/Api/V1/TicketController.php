@@ -25,7 +25,8 @@ class TicketController extends BaseApiController
     public function index(Request $request, TicketRepositoryInterface $repository): JsonResponse
     {
         $data = $repository->paginate($request->input('page_limit'));
-        return $this->successResponse(TicketResource::collection($data));
+        return $this->resultWithAdditional(TicketResource::collection($data));
+//        return $this->successResponse(TicketResource::collection($data));
     }
 
     /**

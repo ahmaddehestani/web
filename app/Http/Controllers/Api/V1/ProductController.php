@@ -27,7 +27,7 @@ class ProductController extends BaseApiController
     public function index(Request $request,ProductRepositoryInterface $repository)
     {
         $data=$repository->paginate($request->input('page_limit'));
-        return $this->successResponse(ProductResource::collection($data));
+        return $this->resultWithAdditional(ProductResource::collection($data));
     }
 
     /**

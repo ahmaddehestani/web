@@ -28,7 +28,7 @@ class SendSmsToAdminForUserResponse implements ShouldQueue
         if (auth()->id()===$event->message->ticket->user_id){
             Log::info("SendSmsToAdminForUserResponse");
             $user=User::find($event->message->ticket->user_id);
-            $user->notify(new NewMessageFromUser($event->message->ticket->key,$event->message->ticket->subject));
+            $user->notify(new NewMessageFromUser($event->message->ticket->key,$user->name,$event->message->ticket->subject));
         }
     }
 }

@@ -15,6 +15,7 @@ use App\Repositories\Product\ProductRepositoryInterface;
 use App\Repositories\Role\RoleRepository;
 use App\Repositories\Role\RoleRepositoryInterface;
 use App\Repositories\Service\ServiceRepository;
+use App\Repositories\Service\ServiceRepositoryInterface;
 use App\Repositories\Ticket\TicketRepository;
 use App\Repositories\Ticket\TicketRepositoryInterface;
 use App\Repositories\User\UserRepository;
@@ -22,8 +23,6 @@ use App\Repositories\User\UserRepositoryInterface;
 use App\Repositories\Video\VideoRepository;
 use App\Repositories\Video\VideoRepositoryInterface;
 use Illuminate\Support\ServiceProvider;
-use Symfony\Contracts\Service\ServiceProviderInterface;
-
 class RepositoryProvider extends ServiceProvider
 {
     /**
@@ -39,7 +38,7 @@ class RepositoryProvider extends ServiceProvider
             ProductRepositoryInterface::class  => ProductRepository::class,
             PlanRepositoryInterface::class     => PlanRepository::class,
             CycleRepositoryInterface::class    => CycleRepository::class,
-            ServiceProviderInterface::class    => ServiceRepository::class,
+            ServiceRepositoryInterface::class  => ServiceRepository::class,
             VideoRepositoryInterface::class    => VideoRepository::class,
             RoleRepositoryInterface::class     => RoleRepository::class,
         ];

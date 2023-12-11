@@ -27,7 +27,7 @@ class VideoController extends BaseApiController
     public function index(Request $request, VideoRepositoryInterface $repository)
     {
         $data=$repository->paginate($request->input('page_limit'));
-        return VideoResource::collection($data->load('category'));
+       return $this->resultWithAdditional(VideoResource::collection($data->load('category')));
     }
 
     /**

@@ -15,7 +15,6 @@ class TicketResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'uuid'=>$this->uuid,
             'subject'=>$this->subject,
             'description'=>$this->description,
             'department'=>$this->department,
