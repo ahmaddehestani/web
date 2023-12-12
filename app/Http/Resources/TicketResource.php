@@ -22,6 +22,8 @@ class TicketResource extends JsonResource
             'closed_by'=>$this->closed_by,
             'status'=>$this->status,
             'key'=>$this->key,
+            'created_at'=>$this->created_at,
+            'updated_at'=>$this->updated_at,
             'priority'=>$this->priority,
             'messages'=>$this->whenLoaded('messages',function (){
                 return   MessageResource::collection($this->resource->messages);

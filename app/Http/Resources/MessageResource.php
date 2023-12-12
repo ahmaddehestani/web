@@ -19,6 +19,8 @@ class MessageResource extends JsonResource
             'key'=>$this->ticket->key,
             'user'=>$this->user->mobile,
             'message'=>$this->message,
+            'created_at'=>$this->created_at,
+            'updated_at'=>$this->updated_at
         ];
     }
 }
