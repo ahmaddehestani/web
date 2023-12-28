@@ -24,9 +24,17 @@ class ServiceController extends BaseApiController
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request,ServiceRepositoryInterface $repository)
+    public function index(Request $request, ServiceRepositoryInterface $repository)
     {
-        $data=$repository->paginate($request->input('page_limit'));
+        $roles = auth()->user()->roles;
+        foreach ($roles as $role) {
+            if ($role->name === "user") {
+
+                $data = $repository->query()->where('user_id', auth()->user()->id)->paginate();
+            } else {
+                $data = $repository->paginate($request->input('page_limit'));
+            }
+        }
         return $this->resultWithAdditional(ServiceResource::collection($data));
 
     }
@@ -36,9 +44,9 @@ class ServiceController extends BaseApiController
      */
     public function store(StoreServiceRequest $request)
     {
-        $model=StoreServiceAction::run($request->validated());
+        $model = StoreServiceAction::run($request->validated());
         return $this->successResponse(
-            ServiceResource::make($model->load('cycle','user')),
+            ServiceResource::make($model->load('cycle', 'user')),
             trans('service.store_success')
         );
     }
@@ -48,7 +56,7 @@ class ServiceController extends BaseApiController
      */
     public function show(Service $service)
     {
-        return $this->successResponse(ServiceResource::make($service->load('plan','user')));
+        return $this->successResponse(ServiceResource::make($service->load('plan', 'user')));
     }
 
     /**
@@ -56,11 +64,11 @@ class ServiceController extends BaseApiController
      */
     public function update(UpdateServiceRequest $request, Service $service)
     {
-       $model=UpdateServiceAction::run($service,$request->validated());
-       return $this->successResponse(
-           ServiceResource::make($model->load('user','plan')),
-           trans('service.update_success0')
-       );
+        $model = UpdateServiceAction::run($service, $request->validated());
+        return $this->successResponse(
+            ServiceResource::make($model->load('user', 'plan')),
+            trans('service.update_success0')
+        );
     }
 
     /**

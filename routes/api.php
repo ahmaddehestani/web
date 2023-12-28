@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\V1\ServiceController;
 use App\Http\Controllers\Api\V1\TicketController;
 use App\Http\Controllers\Api\V1\UserCompanyProfileController;
 use App\Http\Controllers\Api\V1\UserController;
+use App\Http\Controllers\Api\V1\VideoController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -45,7 +46,7 @@ Route::apiresource('product', ProductController::class)->parameter('product', 'p
 Route::apiresource('plan', PlanController::class)->parameter('plan', 'plan:uuid');
 Route::apiresource('cycle', CycleController::class)->parameter('cycle', 'cycle:uuid');
 Route::apiresource('service', ServiceController::class)->parameter('service', 'service:uuid');
-Route::apiresource('video', ServiceController::class)->parameter('video', 'video:uuid');
+Route::apiresource('video', VideoController::class)->parameter('video', 'video:uuid');
 Route::apiresource('role', RoleController::class);
 Route::apiresource('companyProfile', UserCompanyProfileController::class)->parameter('companyProfile', 'companyProfile');
 

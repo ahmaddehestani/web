@@ -34,8 +34,11 @@ class StoreTicketAction
 
             //todo make event
             $user = auth()->user();
-            $user?->notify(new NewTicketNotification($model->key,$user?->name));
-            return $model->load('messages', 'user');
+//            if (env('APP_ENV') === 'production') {
+//                $user->notify(new NewTicketNotification($model->key, $user->name));
+//            }
+//            $user->notify(new NewTicketNotification($model->key, $user->name));
+            return $model->fresh()->load('messages', 'user');
         });
     }
 }

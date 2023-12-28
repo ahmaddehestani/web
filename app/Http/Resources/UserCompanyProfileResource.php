@@ -16,12 +16,12 @@ class UserCompanyProfileResource extends JsonResource
     {
         return [
             'id'                      => $this->id,
-            'activity_field'          => $this->activity_field??null,
-            'company_name'            => $this->company_name??null,
-            'company_personnel_count' => $this->company_personnel_count??null,
-            'company_address'         => $this->company_address??null,
-            'city'                    => $this->city??null,
-            'province'                => $this->province??null,
+            'activity_field'          => $this->activity_field,
+            'company_name'            => $this->company_name,
+            'company_personnel_count' => $this->company_personnel_coun->title(),
+            'company_address'         => $this->company_address,
+            'city'                    => $this->city,
+            'province'                => $this->province,
             //            'user'                    => $this->whenLoaded('user', function () {
             //                return UserResource::make($this->resource->user);
             //            }),

@@ -17,14 +17,13 @@ class TicketResource extends JsonResource
         return [
             'subject'=>$this->subject,
             'description'=>$this->description,
-            'department'=>$this->department,
-            'user create ticket'=>$this->user->mobile,
+            'department'=>$this->department->title(),
             'closed_by'=>$this->closed_by,
-            'status'=>$this->status,
+            'status'=>$this->status->title(),
             'key'=>$this->key,
             'created_at'=>$this->created_at,
             'updated_at'=>$this->updated_at,
-            'priority'=>$this->priority,
+            'priority'=>$this->priority->title(),
             'messages'=>$this->whenLoaded('messages',function (){
                 return   MessageResource::collection($this->resource->messages);
             }) ,

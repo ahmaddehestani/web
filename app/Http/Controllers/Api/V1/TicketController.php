@@ -25,14 +25,25 @@ class TicketController extends BaseApiController
      */
     public function index(Request $request, TicketRepositoryInterface $repository): JsonResponse
     {
-        $roles=auth()->user()->roles;
-        foreach ($roles as $role){
-           if($role->name==="user"){
-               $data=$repository->query()->where('user_id',auth()->user()->id)->paginate();
-           }else{
-               $data = $repository->paginate($request->input('page_limit'));
-           }
-        }
+//        $roles=auth()->user()->roles;
+//        foreach ($roles as $role){
+//           if($role->name==="user"){
+//               $data=$repository->query()->where('user_id',auth()->user()->id)->paginate();
+//           }else{
+//               $data = $repository->paginate($request->input('page_limit'));
+//           }
+//        }
+//        return $this->resultWithAdditional(TicketResource::collection($data));
+
+
+
+
+        $data = $repository->query();
+
+        $data = $data->when(auth()->user()->hasRole('user'), function ($query) {
+            return $query->where('user_id', auth()->user()->id);
+        })->paginate($request->input('page_limit'));
+
         return $this->resultWithAdditional(TicketResource::collection($data));
     }
 
