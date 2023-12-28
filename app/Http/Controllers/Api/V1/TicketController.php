@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1;
 
 
 use App\Actions\Ticket\StoreTicketAction;
+use App\Enums\RoleEnum;
 use App\Http\Requests\TicketRequest;
 use App\Http\Resources\TicketResource;
 use App\Models\Ticket;
@@ -24,9 +25,15 @@ class TicketController extends BaseApiController
      */
     public function index(Request $request, TicketRepositoryInterface $repository): JsonResponse
     {
-        $data = $repository->paginate($request->input('page_limit'));
+        $roles=auth()->user()->roles;
+        foreach ($roles as $role){
+           if($role->name==="user"){
+               $data=$repository->query()->where('user_id',auth()->user()->id)->paginate();
+           }else{
+               $data = $repository->paginate($request->input('page_limit'));
+           }
+        }
         return $this->resultWithAdditional(TicketResource::collection($data));
-//        return $this->successResponse(TicketResource::collection($data));
     }
 
     /**

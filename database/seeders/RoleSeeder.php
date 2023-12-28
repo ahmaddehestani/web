@@ -20,6 +20,10 @@ class RoleSeeder extends Seeder
             'name'       => RoleEnum::ADMIN->value,
             'guard_name' => 'api'
         ]);
+        Role::create([
+            'name'       => RoleEnum::USER->value,
+            'guard_name' => 'api'
+        ]);
         foreach (PermissionEnum::cases() as $case){
             Permission::create([
                 'name'=>$case->value,

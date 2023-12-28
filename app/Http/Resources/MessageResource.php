@@ -16,8 +16,10 @@ class MessageResource extends JsonResource
     {
         return [
             'uuid'=>$this->uuid,
-            'key'=>$this->ticket->key,
-            'user'=>$this->user->mobile,
+            'ticket_key'=>$this->ticket->key,
+            'user'=>$this->whenLoaded('user',function (){
+               return UserResource::make($this->resource->user);
+            }),
             'message'=>$this->message,
             'created_at'=>$this->created_at,
             'updated_at'=>$this->updated_at

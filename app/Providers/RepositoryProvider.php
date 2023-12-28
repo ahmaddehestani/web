@@ -20,9 +20,14 @@ use App\Repositories\Ticket\TicketRepository;
 use App\Repositories\Ticket\TicketRepositoryInterface;
 use App\Repositories\User\UserRepository;
 use App\Repositories\User\UserRepositoryInterface;
+use App\Repositories\UserCompanyProfile\UserCompanyProfileRepository;
+use App\Repositories\UserCompanyProfile\UserCompanyProfileRepositoryInterface;
+use App\Repositories\UserOtp\UserOtpRepository;
+use App\Repositories\UserOtp\UserOtpRepositoryInterface;
 use App\Repositories\Video\VideoRepository;
 use App\Repositories\Video\VideoRepositoryInterface;
 use Illuminate\Support\ServiceProvider;
+
 class RepositoryProvider extends ServiceProvider
 {
     /**
@@ -31,16 +36,18 @@ class RepositoryProvider extends ServiceProvider
     public function register(): void
     {
         $repos = [
-            TicketRepositoryInterface::class   => TicketRepository::class,
-            MessageRepositoryInterface::class  => MessageRepository::class,
-            CategoryRepositoryInterface::class => CategoryRepository::class,
-            UserRepositoryInterface::class     => UserRepository::class,
-            ProductRepositoryInterface::class  => ProductRepository::class,
-            PlanRepositoryInterface::class     => PlanRepository::class,
-            CycleRepositoryInterface::class    => CycleRepository::class,
-            ServiceRepositoryInterface::class  => ServiceRepository::class,
-            VideoRepositoryInterface::class    => VideoRepository::class,
-            RoleRepositoryInterface::class     => RoleRepository::class,
+            TicketRepositoryInterface::class             => TicketRepository::class,
+            MessageRepositoryInterface::class            => MessageRepository::class,
+            CategoryRepositoryInterface::class           => CategoryRepository::class,
+            UserRepositoryInterface::class               => UserRepository::class,
+            ProductRepositoryInterface::class            => ProductRepository::class,
+            PlanRepositoryInterface::class               => PlanRepository::class,
+            CycleRepositoryInterface::class              => CycleRepository::class,
+            ServiceRepositoryInterface::class            => ServiceRepository::class,
+            VideoRepositoryInterface::class              => VideoRepository::class,
+            RoleRepositoryInterface::class               => RoleRepository::class,
+            UserOtpRepositoryInterface::class            => UserOtpRepository::class,
+            UserCompanyProfileRepositoryInterface::class => UserCompanyProfileRepository::class,
         ];
         foreach ($repos as $index => $repo) {
             $this->app->bind($index, $repo);

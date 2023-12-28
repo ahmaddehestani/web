@@ -27,7 +27,6 @@ class UserController extends BaseApiController
     {
         $data = $repository->paginate($request->input('page_limit'));
         return $this->resultWithAdditional(UserResource::collection($data));
-//        return $this->successResponse(UserResource::collection($data));
     }
 
     /**
@@ -56,8 +55,10 @@ class UserController extends BaseApiController
      */
     public function update(UpdateUserRequest $request, User $user)
     {
-        $model = UpdateUserAction::run($user, $request->validated());
-        return $this->successResponse(UserResource::make($model),
+        $data = $request->validated();
+        $data['id'] = $user->id;
+        $model = UpdateUserAction::run($user, $data);
+        return $this->successResponse(UserResource::make($model->load(['roles','services','tickets', 'UserCompanyProfile'])),
             trans('user.update_success'));
     }
 

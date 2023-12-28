@@ -15,7 +15,10 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        $admin = User::factory()->create();
+        $admin = User::factory()->create([
+            'name'=>'admin',
+            'mobile'=>'9100000000'
+        ]);
         $role = Role::where('name',RoleEnum::ADMIN->value)->first();
         $admin->assignRole($role);
         User::factory(10)->create();

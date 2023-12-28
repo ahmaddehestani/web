@@ -28,7 +28,6 @@ class CategoryController extends BaseApiController
     {
         $data = $repository->paginate($request->input('page_limit'));
        return $this->resultWithAdditional(CategoryResource::collection($data));
-//        return $this->successResponse(CategoryResource::collection($data));
     }
 
     /**

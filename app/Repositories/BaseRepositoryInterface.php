@@ -8,7 +8,7 @@ use Spatie\QueryBuilder\QueryBuilder;
 
 interface BaseRepositoryInterface
 {
-    public function query(array $payload = []):  Builder|QueryBuilder;
+    public function query(array $payload = []): Builder|QueryBuilder;
 
     public function paginate($limit = 15, array $payload = []);
 
@@ -25,4 +25,6 @@ interface BaseRepositoryInterface
 
 
     public function getModel(): Model;
+
+    public function updateOrCreate(array $data, array $conditions = []);
 }

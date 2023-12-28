@@ -25,7 +25,6 @@ class MessageController extends BaseApiController
     {
         $data = $repository->paginate($request->input('page_limit'));
         return $this->resultWithAdditional(MessageResource::collection($data));
-//        return $this->successResponse(MessageResource::collection($data));
     }
 
     /**

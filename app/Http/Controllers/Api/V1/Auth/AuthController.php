@@ -3,8 +3,11 @@
 namespace App\Http\Controllers\Api\V1\Auth;
 
 
-use App\Actions\User\Otp\SentOtpAction;
-use App\Actions\User\UpdateUserAction;
+use App\Actions\Auth\ConfirmOtpAction;
+use App\Actions\Auth\ForgetPasswordAction;
+use App\Actions\Auth\LoginAction;
+use App\Actions\Auth\RegisterAction;
+use App\Actions\Auth\SetPasswordAction;
 use App\Http\Controllers\Api\V1\BaseApiController;
 use App\Http\Requests\ConfirmOtpRequest;
 use App\Http\Requests\ForgetPasswordRequest;
@@ -13,13 +16,8 @@ use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\SetPasswordRequest;
 use App\Http\Resources\HowIsLoginResource;
 use App\Http\Resources\UserResource;
-use App\Models\User;
-use App\Models\UserOtp;
 use Auth;
-use Carbon\Carbon;
-use http\Client\Request;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\DB;
 
 class AuthController extends BaseApiController
 {
@@ -29,39 +27,13 @@ class AuthController extends BaseApiController
      */
     public function register(RegisterRequest $request)
     {
-
-        if ($request->input('mobile_prefix', '+98') === '+98') {
-            $oldUser = User::where('mobile', $request->input('mobile'))->first();
-            if (isset($oldUser['mobile_verified_at'])) {
-                return trans('auth.registered');
-            }
-            if (!$oldUser) {
-                return DB::transaction(function () use ($request) {
-                    $user = new User;
-                    $user->mobile_prefix = $request->mobile_prefix;
-                    $user->mobile = (int)$request->mobile;
-                    $user->save();
-                    $data = SentOtpAction::run($user);
-                    return $this->successResponse($data);
-                });
-            }
-            $data = SentOtpAction::run($oldUser);
-            return $this->successResponse($data);
-
-
-        }
-
-        return $this->errorResponse(trans('auth.prefix_incorrect'));
+        return $this->successResponse(RegisterAction::run($request));
     }
 
     public function confirmOtp(ConfirmOtpRequest $request)
     {
-        $userOtp = UserOtp::where('secret', $request['secret'])->latest()->first();
-        if ($userOtp && $userOtp->otp === $request['otp']) {
-            $userOtp->user()->update([
-                'mobile_verified_at' => Carbon::now(),
-            ]);
-            $success['token'] = $userOtp->user->createToken('MyApp')->plainTextToken;
+        $success = ConfirmOtpAction::run($request->validated());
+        if ($success) {
             return $this->successResponse($success, trans('auth.verified'));
         }
         return $this->errorResponse(trans('auth.otp_incorrect'), 403);
@@ -69,9 +41,7 @@ class AuthController extends BaseApiController
 
     public function setPassword(SetPasswordRequest $request): JsonResponse
     {
-        $user = auth()->user();
-        $user = UpdateUserAction::run($user, $request->validated());
-        return $this->successResponse(UserResource::make($user),
+        return $this->successResponse(UserResource::make(SetPasswordAction::run($request->validated())),
             trans('user.update_success')
         );
     }
@@ -79,10 +49,7 @@ class AuthController extends BaseApiController
     public function login(LoginRequest $request): JsonResponse
     {
         if (Auth::attempt(['mobile' => $request->mobile, 'password' => $request->password])) {
-            $user = Auth::user();
-            $data['token'] = $user?->createToken('MyApp')->plainTextToken;
-            $data['user']=HowIsLoginResource::make(auth()->user());
-            return $this->successResponse($data, trans('auth.login_successfully'));
+            return $this->successResponse(LoginAction::run(), trans('auth.login_successfully'));
         }
         return $this->errorResponse(trans('auth.password_incorrect'));
     }
@@ -90,19 +57,22 @@ class AuthController extends BaseApiController
     public function forgetPassword(ForgetPasswordRequest $request): JsonResponse
     {
         if ($request->input('mobile_prefix', '+98') === '+98') {
-            $user = User::where('mobile', $request->input('mobile'))->first();
-            if ($user) {
-                if (isset($user['mobile_verified_at'])) {
-                    $data = SentOtpAction::run($user);
-                    return $this->successResponse($data);
-                }
-                return $this->errorResponse(trans('auth.not_confirmed'));
+            $data = ForgetPasswordAction::run($request->validated());
+            if ($data) {
+                return $this->successResponse($data);
             }
+            return $this->successResponse(trans('auth.not_confirmed'));
         }
         return $this->errorResponse(trans('auth.must_registered'));
     }
 
-    public function HowIsLogin(){
-        return $this->successResponse(HowIsLoginResource::make(auth()->user()));
+    public function HowIsLogin()
+    {
+            return $this->successResponse(HowIsLoginResource::make(auth()->user()->load('roles','services','tickets', 'UserCompanyProfile')));
+    }
+    public function logOut(){
+
+        auth()->user()?->tokens()->delete();
+        return $this->successResponse(trans('auth.logOut'));
     }
 }

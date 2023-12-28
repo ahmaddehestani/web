@@ -18,9 +18,7 @@ class StoreCategoryAction
     {
         if(isset($payload['parent_uuid'])){
             $payload['parent_id'] = $this->repository->find($payload['parent_uuid'],'uuid')->id;
-
         }
-
         return $this->repository->create($payload);
 
     }

@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api\V1;
 use App\Actions\Video\DeleteVideoAction;
 use App\Actions\Video\StoreVideoAction;
 use App\Actions\Video\UpdateVideoAction;
-use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreVideoRequest;
 use App\Http\Requests\UpdateVideoRequest;
 use App\Http\Resources\VideoResource;

@@ -28,7 +28,6 @@ class ServiceController extends BaseApiController
     {
         $data=$repository->paginate($request->input('page_limit'));
         return $this->resultWithAdditional(ServiceResource::collection($data));
-//        return $this->successResponse(ServiceResource::collection($data));
 
     }
 
@@ -39,7 +38,7 @@ class ServiceController extends BaseApiController
     {
         $model=StoreServiceAction::run($request->validated());
         return $this->successResponse(
-            ServiceResource::make($model->load('plan','user')),
+            ServiceResource::make($model->load('cycle','user')),
             trans('service.store_success')
         );
     }

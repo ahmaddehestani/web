@@ -25,8 +25,8 @@ class Ticket extends Model
         'priority',
     ];
     protected $casts    = [
-        'status'   => TableTicketFieldStatusEnum::class,
-        'priority' => TableTicketFieldPriorityEnum::class,
+        'status'     => TableTicketFieldStatusEnum::class,
+        'priority'   => TableTicketFieldPriorityEnum::class,
         'department' => TableTicketFieldDepartmentEnum::class,
     ];
 
@@ -34,7 +34,7 @@ class Ticket extends Model
     {
         parent::boot();
         static::creating(function (Ticket $ticket) {
-            $ticket->key = floor(time()-999999999);
+            $ticket->key = floor(time() - 999999999);
         });
     }
 
