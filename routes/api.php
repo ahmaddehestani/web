@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\V1\Auth\AuthController;
 use App\Http\Controllers\Api\V1\CategoryController;
+use App\Http\Controllers\Api\V1\ConsultationRequestController;
 use App\Http\Controllers\Api\V1\CycleController;
 use App\Http\Controllers\Api\V1\MessageController;
 use App\Http\Controllers\Api\V1\PlanController;
@@ -49,5 +50,5 @@ Route::apiresource('service', ServiceController::class)->parameter('service', 's
 Route::apiresource('video', VideoController::class)->parameter('video', 'video:uuid');
 Route::apiresource('role', RoleController::class);
 Route::apiresource('companyProfile', UserCompanyProfileController::class)->parameter('companyProfile', 'companyProfile');
-
+Route::post('consultation-request',[ConsultationRequestController::class,'store']);
 

@@ -22,7 +22,6 @@ class UpdateVideoRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'uuid'        => ['required','uuid'],
             'category_uuid' => ['required', 'uuid','exists:categories,uuid'],
             'url'         => ['required','string'],
             'title'       => ['required','string','min:2',"max:65"],
