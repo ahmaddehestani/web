@@ -24,7 +24,7 @@ class SetPasswordRequest extends FormRequest
     {
         return [
             'name'=>'string|min:2|max:250',
-            'email'=>'email',
+            'email'=>'unique:users,email,'.$this->user()->id,
             'password'=>'required|min:6|max:64',
             'confirmed_password'=>'required|same:password'
         ];

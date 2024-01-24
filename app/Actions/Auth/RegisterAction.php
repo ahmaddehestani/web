@@ -21,20 +21,21 @@ class RegisterAction
     public function handle($request)
     {
         if ($request->input('mobile_prefix', '+98') === '+98') {
-            $oldUser = $this->repository->find($request->input('mobile'));
-            if (isset($oldUser['mobile_verified_at'])) {
+
+            $oldUser = $this->repository->find($request['mobile'],'mobile');
+            if ($oldUser && isset($oldUser['mobile_verified_at'])) {
                 return trans('auth.registered');
+            }
+            if($oldUser &&!isset($oldUser['mobile_verified_at'])){
+                return SentOtpAction::run($oldUser);
             }
             if (!$oldUser) {
                 return DB::transaction(function () use ($request) {
-
-
                     /** @var User $user */
                     $user = $this->repository->create([
                         'mobile_prefix' => $request->mobile_prefix,
                         'mobile'        => (int)$request->mobile,
                     ]);
-//                    $user->assignRole(RoleEnum::USER->value);
                     $role=Role::where('name',RoleEnum::USER->value)->first();
                     $user->assignRole($role);
                     return SentOtpAction::run($user);
